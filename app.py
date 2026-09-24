@@ -8,9 +8,11 @@ st.set_page_config(
 st.title("🎓 Student Space")
 st.subheader("Your Study Space, Anywhere")
 
-st.write(
-    "A website for students who do not have their own laptop."
-)
+st.write("A website for students who do not have their own laptop.")
+
+# Store uploaded files
+if "files" not in st.session_state:
+    st.session_state.files = []
 
 st.sidebar.title("Menu")
 
@@ -27,27 +29,32 @@ if page == "Home":
 elif page == "Dashboard":
     st.header("📊 Student Dashboard")
     st.write("Welcome to your dashboard.")
-    st.write("📁 Your files: 0")
+    st.write("📁 Your files:", len(st.session_state.files))
     st.write("📚 Your projects: 0")
     st.write("🎤 Presentations: 0")
 
 elif page == "Upload File":
     st.header("⬆️ Upload File")
 
-    file = st.file_uploader(
-        "Choose your academic file"
-    )
+    file = st.file_uploader("Choose your academic file")
 
     if file:
+        if file.name not in st.session_state.files:
+            st.session_state.files.append(file.name)
+
         st.success("File uploaded successfully! ✅")
         st.write("File name:", file.name)
 
 elif page == "My Files":
     st.header("📁 My Files")
-    st.info("Your saved files will appear here.")
+
+    if len(st.session_state.files) == 0:
+        st.info("No files uploaded yet.")
+    else:
+        for file_name in st.session_state.files:
+            st.write("📄", file_name)
 
 elif page == "Presentation Mode":
     st.header("🎤 Presentation Mode")
-    st.write(
-        "Open your project here and present it easily."
-    )
+    st.write("Open your project here and present it easily.")
+    
