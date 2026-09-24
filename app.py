@@ -10,9 +10,11 @@ st.subheader("Your Study Space, Anywhere")
 
 st.write("A website for students who do not have their own laptop.")
 
-# Store uploaded files
 if "files" not in st.session_state:
     st.session_state.files = []
+
+if "presentation_file" not in st.session_state:
+    st.session_state.presentation_file = None
 
 st.sidebar.title("Menu")
 
@@ -36,9 +38,14 @@ elif page == "Dashboard":
 elif page == "Upload File":
     st.header("⬆️ Upload File")
 
-    file = st.file_uploader("Choose your academic file")
+    file = st.file_uploader(
+        "Choose your academic file",
+        type=["pdf", "pptx", "docx", "txt"]
+    )
 
     if file:
+        st.session_state.presentation_file = file
+
         if file.name not in st.session_state.files:
             st.session_state.files.append(file.name)
 
@@ -56,5 +63,23 @@ elif page == "My Files":
 
 elif page == "Presentation Mode":
     st.header("🎤 Presentation Mode")
-    st.write("Open your project here and present it easily.")
+
+    if st.session_state.presentation_file is not None:
+
+        file = st.session_state.presentation_file
+
+        st.success("Your presentation is ready! 🎉")
+        st.write("File:", file.name)
+
+        if file.name.endswith(".pdf"):
+            st.pdf(file)
+
+        else:
+            st.info(
+                "Your file is uploaded. "
+                "Download it and open it in PowerPoint to present."
+            )
+
+    else:
+        st.info("Please upload a file first.")
     
